@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: nexavault-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: fintechdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Priya666,.
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - nexavault-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Spring Boot Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nexavault-backend
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/fintechdb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: Priya666,.
+      JWT_SECRET: mySecretKeyForJWTTokenGenerationPleaseChangeThisInProduction256Bits
+      SPRING_MAIL_USERNAME: nexavaultfintechapp@gmail.com
+      SPRING_MAIL_PASSWORD: zczifpucfxcfsfdm
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - nexavault-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  # Angular Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: nexavault-frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - nexavault-network
+
+volumes:
+  postgres-data:
+    driver: local
+
+networks:
+  nexavault-network:
+    driver: bridge

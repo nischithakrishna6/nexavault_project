@@ -1,19 +1,16 @@
 package com.fintech.platform.service;
 
-import com.fintech.platform.dto.ForgotPasswordRequest;
-import com.fintech.platform.dto.ResetPasswordRequest;
-import com.fintech.platform.dto.VerifyOTPRequest;
-import com.fintech.platform.model.OTP;
+import com.fintech.platform.dto.ApiResponse;
 import com.fintech.platform.model.User;
-import com.fintech.platform.repository.OTPRepository;
 import com.fintech.platform.repository.UserRepository;
-import com.fintech.platform.util.PasswordValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 @Service
@@ -21,75 +18,82 @@ import java.util.Random;
 public class PasswordResetService {
 
     private final UserRepository userRepository;
-    private final OTPRepository otpRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;  // ✅ ADD THIS
+
+    private final Map<String, OTPData> otpStore = new HashMap<>();
 
     @Transactional
-    public void sendOTP(ForgotPasswordRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("No account found with this email"));
+    public ApiResponse<String> sendOTP(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
 
-        // Delete any existing OTPs for this email
-        otpRepository.deleteByEmail(request.getEmail());
+        String otp = generateOTP();
+        otpStore.put(email, new OTPData(otp, LocalDateTime.now().plusMinutes(10)));
 
-        // Generate 6-digit OTP
-        String otpCode = String.format("%06d", new Random().nextInt(999999));
-
-        // Save OTP (expires in 10 minutes)
-        OTP otp = new OTP();
-        otp.setEmail(request.getEmail());
-        otp.setOtp(otpCode);
-        otp.setExpiresAt(LocalDateTime.now().plusMinutes(10));
-        otp.setIsUsed(false);
-
-        otpRepository.save(otp);
-
-        // In production, send email here
-        // For now, we'll just log it
-        System.out.println("OTP for " + request.getEmail() + ": " + otpCode);
-        System.out.println("OTP expires at: " + otp.getExpiresAt());
-    }
-
-    @Transactional(readOnly = true)
-    public boolean verifyOTP(VerifyOTPRequest request) {
-        return otpRepository.findByEmailAndOtpAndIsUsedFalseAndExpiresAtAfter(
-                request.getEmail(),
-                request.getOtp(),
-                LocalDateTime.now()
-        ).isPresent();
-    }
-
-    @Transactional
-    public void resetPassword(ResetPasswordRequest request) {
-        // Verify OTP
-        OTP otp = otpRepository.findByEmailAndOtpAndIsUsedFalseAndExpiresAtAfter(
-                request.getEmail(),
-                request.getOtp(),
-                LocalDateTime.now()
-        ).orElseThrow(() -> new RuntimeException("Invalid or expired OTP"));
-
-        // Get user
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // Validate new password
-        PasswordValidator.ValidationResult validation = PasswordValidator.validate(
-                request.getNewPassword(),
-                user.getEmail(),
-                user.getFirstName(),
-                user.getLastName()
-        );
-
-        if (!validation.isValid()) {
-            throw new RuntimeException(validation.getError());
+        // ✅ REPLACE console print with actual email
+        try {
+            emailService.sendOTPEmail(email, otp);
+            System.out.println(" OTP sent to email: " + email);
+        } catch (Exception e) {
+            System.err.println(" Failed to send email: " + e.getMessage());
+            // Fallback: still log to console in dev mode
+            System.out.println(" [DEV MODE] OTP for " + email + ": " + otp);
         }
 
-        // Update password
-        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        return new ApiResponse<>(true, "OTP sent to your email", null);
+    }
+
+    public ApiResponse<Boolean> verifyOTP(String email, String otp) {
+        OTPData otpData = otpStore.get(email);
+
+        if (otpData == null) {
+            return new ApiResponse<>(false, "OTP not found or expired", false);
+        }
+
+        if (LocalDateTime.now().isAfter(otpData.expiryTime)) {
+            otpStore.remove(email);
+            return new ApiResponse<>(false, "OTP has expired", false);
+        }
+
+        if (!otpData.otp.equals(otp)) {
+            return new ApiResponse<>(false, "Invalid OTP", false);
+        }
+
+        return new ApiResponse<>(true, "OTP verified successfully", true);
+    }
+
+    @Transactional
+    public ApiResponse<String> resetPassword(String email, String otp, String newPassword) {
+        ApiResponse<Boolean> verifyResponse = verifyOTP(email, otp);
+        if (!verifyResponse.isSuccess()) {
+            return new ApiResponse<>(false, verifyResponse.getMessage(), null);
+        }
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
 
-        // Mark OTP as used
-        otp.setIsUsed(true);
-        otpRepository.save(otp);
+        otpStore.remove(email);
+
+        return new ApiResponse<>(true, "Password reset successfully", null);
+    }
+
+    private String generateOTP() {
+        Random random = new Random();
+        int otp = 100000 + random.nextInt(900000);
+        return String.valueOf(otp);
+    }
+
+    private static class OTPData {
+        String otp;
+        LocalDateTime expiryTime;
+
+        OTPData(String otp, LocalDateTime expiryTime) {
+            this.otp = otp;
+            this.expiryTime = expiryTime;
+        }
     }
 }
