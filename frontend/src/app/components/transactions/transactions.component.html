@@ -1,0 +1,307 @@
+<div class="auth-outer-container">
+
+    <div class="container">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1>Transaction History</h1>
+        <p class="text-muted">View all your transactions</p>
+      </div>
+
+      <!-- Search Filter Bar -->
+      <div class="toolbar">
+        <div class="search-box">
+          <span class="search-icon"><img src="/search.png"></span>
+          <input
+            type="text"
+            placeholder="Search by name, account, reference..."
+            [(ngModel)]="searchQuery"
+            (input)="applyFilters()"
+          />
+        </div>
+        <button class="btn-filter" (click)="toggleFilters()">
+          <span>⚙ Filters</span>
+          <span class="filter-indicator" *ngIf="hasActiveFilters()">●</span>
+        </button>
+      </div>
+
+      <!-- Collapsible Filter Panel -->
+      <div class="filter-panel" [class.open]="showFilters">
+        <div class="filter-panel-inner">
+
+          <div class="filter-group">
+            <label>Year</label>
+            <select [(ngModel)]="selectedYear" (change)="applyFilters()">
+              <option value="">All Years</option>
+              <option *ngFor="let year of availableYears" [value]="year">{{ year }}</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>Month</label>
+            <select [(ngModel)]="selectedMonth" (change)="applyFilters()">
+              <option value="">All Months</option>
+              <option value="1">January</option>
+              <option value="2">February</option>
+              <option value="3">March</option>
+              <option value="4">April</option>
+              <option value="5">May</option>
+              <option value="6">June</option>
+              <option value="7">July</option>
+              <option value="8">August</option>
+              <option value="9">September</option>
+              <option value="10">October</option>
+              <option value="11">November</option>
+              <option value="12">December</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>Type</label>
+            <select [(ngModel)]="selectedType" (change)="applyFilters()">
+              <option value="">All Types</option>
+              <option value="CREDIT">Credit</option>
+              <option value="DEBIT">Debit</option>
+            </select>
+          </div>
+
+          <button class="btn-clear" (click)="clearFilters()">✕ Clear All</button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="spinner"></div>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="alert alert-error">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Transactions List -->
+      <div *ngIf="!isLoading && !errorMessage">
+
+        <!-- Empty State -->
+        <div *ngIf="filteredTransactions.length === 0" class="empty-state">
+          <div class="empty-icon"></div>
+          <h3>No transactions found</h3>
+          <p class="text-muted">Try adjusting your filters or make your first transfer</p>
+          <button class="btn btn-primary mt-3" routerLink="/transfer">
+            Make Your First Transfer
+          </button>
+        </div>
+
+        <!-- Transactions Table -->
+        <div *ngIf="filteredTransactions.length > 0" class="transactions-table-wrapper">
+          <div class="transactions-table">
+
+            <div class="table-header">
+              <div class="th">Date</div>
+              <div class="th">Type</div>
+              <div class="th">From/To</div>
+              <div class="th">Bank</div>
+              <div class="th">Amount</div>
+              <div class="th">Actions</div>
+            </div>
+
+            <div *ngFor="let transaction of filteredTransactions" class="table-row">
+
+              <!-- Date -->
+              <div class="td" data-label="Date">
+                <span class="date">{{ formatDate(transaction.createdAt) }}</span>
+              </div>
+
+              <!-- Type -->
+              <div class="td" data-label="Type">
+                <span class="type-badge"
+                      [ngClass]="{
+                    'credit': getDirection(transaction) === 'CREDIT',
+                    'debit':  getDirection(transaction) === 'DEBIT'
+                  }">
+                  <span *ngIf="getDirection(transaction) === 'CREDIT'"></span>
+                  <span *ngIf="getDirection(transaction) === 'DEBIT'"></span>
+                  {{ getDirection(transaction) }}
+                </span>
+              </div>
+
+              <!-- From/To -->
+              <div class="td" data-label="From/To">
+                <div class="account-info">
+                  <div *ngIf="getDirection(transaction) === 'DEBIT'">
+                    <small class="text-muted">To:</small>
+                    <span class="account-name">{{transaction.toAccountHolderName}}</span>
+                    <br/>
+                    <small class="account-number">{{transaction.toAccountNumber}}</small>
+                  </div>
+                  <div *ngIf="getDirection(transaction) === 'CREDIT'">
+                    <small class="text-muted">From:</small>
+                    <span class="account-name">{{transaction.fromAccountHolderName}}</span>
+                    <br/>
+                    <small class="account-number">{{transaction.fromAccountNumber}}</small>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bank -->
+              <div class="td" data-label="Bank">
+                <span class="bank-badge">
+                  {{
+                    getDirection(transaction) === 'DEBIT'
+                      ? (transaction.toBankCode || '—')
+                      : (transaction.fromBankCode || '—')
+                  }}
+                </span>
+              </div>
+
+              <!-- Amount -->
+              <div class="td" data-label="Amount">
+                <span class="amount"
+                      [ngClass]="{
+                    'amount-credit': getDirection(transaction) === 'CREDIT',
+                    'amount-debit':  getDirection(transaction) === 'DEBIT'
+                  }">
+                  <span *ngIf="getDirection(transaction) === 'CREDIT'"></span>
+                  <span *ngIf="getDirection(transaction) === 'DEBIT'"></span>
+                  {{ formatCurrency(transaction.amount) }}
+                </span>
+              </div>
+
+              <!-- Actions -->
+              <div class="td" data-label="Actions">
+                <button
+                  class="btn-summary"
+                  (click)="openSummary(transaction)"
+                  title="View Summary">
+                  Summary
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Results Count -->
+        <div class="results-count" *ngIf="filteredTransactions.length > 0">
+          Showing {{ filteredTransactions.length }} of {{ transactions.length }} transactions
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ SUMMARY MODAL -->
+  <div class="modal-overlay" *ngIf="showSummaryModal" (click)="closeSummary()">
+    <div class="summary-modal" (click)="$event.stopPropagation()">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div class="modal-title">
+          <h2> Transaction Summary</h2>
+          <p class="modal-subtitle">Reference: {{ selectedTransaction?.referenceNumber }}</p>
+        </div>
+        <button class="btn-close" (click)="closeSummary()">✕</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body" *ngIf="selectedTransaction">
+
+        <!-- Status Badge -->
+        <div class="summary-status">
+          <span class="status-badge-large"
+                [ngClass]="selectedTransaction.status.toLowerCase()">
+            {{ selectedTransaction.status }}
+          </span>
+        </div>
+
+        <!-- Amount Display -->
+        <div class="summary-amount">
+          <span class="amount-label">Amount</span>
+          <span class="amount-value"
+                [ngClass]="{
+                  'amount-credit': getDirection(selectedTransaction) === 'CREDIT',
+                  'amount-debit': getDirection(selectedTransaction) === 'DEBIT'
+                }">
+            <span *ngIf="getDirection(selectedTransaction) === 'CREDIT'"></span>
+            <span *ngIf="getDirection(selectedTransaction) === 'DEBIT'"></span>
+            {{ formatCurrency(selectedTransaction.amount) }}
+          </span>
+        </div>
+
+        <!-- Transaction Details Grid -->
+        <div class="summary-grid">
+
+          <!-- Sender Section -->
+          <div class="summary-section">
+            <h3>From (Sender)</h3>
+            <div class="summary-item">
+              <span class="item-label">Name</span>
+              <span class="item-value">{{ selectedTransaction.fromAccountHolderName }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="item-label">Account</span>
+              <span class="item-value">{{ selectedTransaction.fromAccountNumber }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="item-label">Bank</span>
+              <span class="item-value">
+      {{ selectedTransaction.toBankName || selectedTransaction.toBankCode || '—' }}
+    </span>
+            </div>
+          </div>
+
+          <!-- Receiver Section -->
+          <div class="summary-section">
+            <h3>To (Receiver)</h3>
+            <div class="summary-item">
+              <span class="item-label">Name</span>
+              <span class="item-value">{{ selectedTransaction.toAccountHolderName }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="item-label">Account</span>
+              <span class="item-value">{{ selectedTransaction.toAccountNumber }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="item-label">Bank</span>
+              <span class="item-value">
+      {{ selectedTransaction.toBankName || selectedTransaction.toBankCode || '—' }}
+    </span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Additional Info -->
+        <div class="summary-footer">
+          <div class="summary-item">
+            <span class="item-label">Transaction ID</span>
+            <span class="item-value">#{{ selectedTransaction.id }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="item-label">Type</span>
+            <span class="item-value">{{ selectedTransaction.transactionType }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="item-label">Date & Time</span>
+            <span class="item-value">{{ formatDate(selectedTransaction.createdAt) }}</span>
+          </div>
+          <div class="summary-item" *ngIf="selectedTransaction.description">
+            <span class="item-label">Description</span>
+            <span class="item-value">{{ selectedTransaction.description }}</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button class="btn-share" (click)="shareSummary()">
+          Share
+        </button>
+        <button class="btn-download" (click)="downloadSummary()">
+          Download
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+

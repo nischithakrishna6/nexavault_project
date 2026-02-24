@@ -1,0 +1,245 @@
+/* Outer container with abstract background */
+.auth-outer-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  animation: gradientShift 10s ease infinite;
+  background-size: 200% 200%;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.auth-page {
+  min-height: 10vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Inner container with glass effect */
+.auth-inner-container {
+  display: flex;
+  width: 100%;
+  max-width: 1000px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgb(0 0 0 / 50%);
+
+  /* Glassmorphism */
+  background: rgb(255 255 255 / 12%);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgb(255 255 255 / 25%);
+}
+
+/* Responsive fallback */
+@media (width <= 800px) {
+  .auth-inner-container {
+    flex-direction: column;
+    max-width: 90%;
+  }
+}
+
+/* Left panel (promo) */
+.auth-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3rem;
+  color: #fff;
+
+  /* Glass look */
+  background: rgb(255 255 255 / 10%);
+  backdrop-filter: blur(15px);
+}
+
+/* Heading */
+.welcome-heading {
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #fff;
+  line-height: 1.2;
+}
+
+/* Description */
+.welcome-description {
+  font-size: 1rem;
+  line-height: 1.7;
+  font-style: italic;
+  color: #e0e0e0;
+  max-width: 400px;
+  text-align: justify;
+}
+
+/* Right panel */
+.auth-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+
+  /* Glass */
+  background: rgb(255 255 255 / 10%);
+  backdrop-filter: blur(15px);
+}
+
+.side-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  filter: brightness(0) invert(1);
+  position: relative;
+  padding-left: 5px;
+  margin-bottom: 50px;
+}
+
+.side-logo img {
+  width: 150px;
+  margin-left: -12px;
+}
+
+/* Login card */
+.auth-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 2.5rem;
+  border-radius: 20px;
+
+  /* Stronger glass */
+  background: rgb(255 255 255 / 40%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgb(255 255 255 / 25%);
+  box-shadow: 0 8px 30px rgb(0 0 0 / 30%);
+  color: #fff;
+  animation: fadeInUp 0.6s ease;
+}
+
+/* Inputs */
+.auth-card input {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  border: 1px solid rgb(255 255 255 / 30%);
+  background: rgb(255 255 255 / 10%);
+  color: #fff;
+  backdrop-filter: blur(10px);
+}
+
+
+/* Button */
+.auth-card button {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 12px;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.auth-card button:hover {
+  background: linear-gradient(135deg, #5A00D4, #A35CFF);
+}
+
+/* Footer link */
+.auth-footer p.text-muted {
+  color: #000 !important;
+}
+
+.auth-footer p.text-muted a {
+  color:#6a00f4 !important;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.auth-footer p.text-muted a:hover {
+  color: #4b00b5 !important;
+}
+
+/* Animation */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Password input wrapper */
+.password-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  padding-right: 3rem !important; /* Space for icon */
+}
+
+/* Eye icon wrapper */
+.eye-icon-wrapper {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-right: 1rem;
+  pointer-events: none; /* Allow clicking through wrapper */
+}
+
+/* Eye icon button */
+.eye-icon-btn {
+  background: none !important ;
+  border: none !important;
+  cursor: pointer;
+  padding: 0.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+  pointer-events: all; /* Button is clickable */
+  margin-top: -35px;
+  margin-right: -30px;
+}
+
+.eye-icon-btn:hover {
+  opacity: 1;
+}
+
+.eye-icon-btn img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  filter: brightness(0) saturate(100%) invert(17%) sepia(98%) saturate(7395%) hue-rotate(260deg) brightness(94%) contrast(96%);
+}
+
+/* Forgot Password link (same style as Register here) */
+.forgot-password-link {
+  color: #6a00f4 !important;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.forgot-password-link:hover {
+  color: #4b00b5 !important;
+}

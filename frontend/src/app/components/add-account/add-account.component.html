@@ -1,0 +1,280 @@
+<!-- Header -->
+<div class="page-header">
+  <div class="header-content">
+    <h1>Link Your Bank Account</h1>
+    <p class="text-muted">
+      <span *ngIf="step === 'bank-selection'">Select your bank</span>
+      <span *ngIf="step === 'account-details'">Enter account details</span>
+      <span *ngIf="step === 'success'">Account linked!</span>
+    </p>
+  </div>
+</div>
+
+<!-- ✅ DEMO MODE DISCLAIMER -->
+<div class="demo-disclaimer">
+  <div class="disclaimer-icon"></div>
+  <div class="disclaimer-content">
+    <strong>Demo Mode Active</strong>
+    <p>This is a demonstration application. No real bank accounts are being linked. A random balance between ₹5,000 and ₹50,000 will be assigned for testing purposes.</p>
+  </div>
+</div>
+
+<!-- Progress Steps -->
+<div class="progress-steps">
+  <div class="step" [class.active]="step === 'bank-selection'" [class.completed]="step !== 'bank-selection'">
+    <div class="step-icon">1</div>
+    <span>Select Bank</span>
+  </div>
+  <div class="step-line"></div>
+  <div class="step" [class.active]="step === 'account-details'" [class.completed]="step === 'success'">
+    <div class="step-icon">2</div>
+    <span>Account Details</span>
+  </div>
+  <div class="step-line"></div>
+  <div class="step" [class.active]="step === 'success'">
+    <div class="step-icon">✓</div>
+    <span>Complete</span>
+  </div>
+</div>
+
+<!-- Step 1: Bank Selection -->
+<div *ngIf="step === 'bank-selection'" class="bank-selection">
+
+  <div class="form-group">
+    <label for="bankSelect">Select Bank *</label>
+
+    <select
+      id="bankSelect"
+      class="bank-dropdown"
+      placeholder="-- Select your bank --"
+      [(ngModel)]="selectedBankCode"
+      name="bankSelect"
+      (change)="onBankDropdownSelect()"
+      required>
+      <option value="" disabled selected>-- Select your bank --</option>
+      <option *ngFor="let bank of banks" [value]="bank.code">
+        {{ bank.name }} ({{ bank.code }})
+      </option>
+    </select>
+  </div>
+</div>
+
+<!-- Step 2: Account Details Form -->
+<form *ngIf="step === 'account-details'" (ngSubmit)="linkAccount()">
+
+  <!-- Security Notice -->
+  <div class="security-notice">
+    <div class="security-icon">🔒</div>
+    <div class="security-text">
+      <strong>Your data is secure</strong>
+      <p>Bank-grade encryption</p>
+    </div>
+  </div>
+
+  <!-- Selected Bank Display -->
+  <div class="selected-bank-display" *ngIf="selectedBank">
+    <div class="selected-bank-info">
+      <img
+        [src]="selectedBank.logo"
+        [alt]="selectedBank.name"
+        class="bank-logo-img"
+        (error)="handleLogoError($event)"
+      />
+      <strong>{{ selectedBank.name }} ({{ selectedBank.code }})</strong>
+    </div>
+    <div class="form-actions">
+      <button type="button" class="btn btn-secondary" (click)="goBackToBankSelection()">
+      Change
+    </button>
+    </div>
+  </div>
+
+  <!-- Account Type -->
+  <div class="form-group">
+    <label for="accountType">Account Type *</label>
+    <select
+      id="accountType"
+      [(ngModel)]="newAccount.accountType"
+      name="accountType"
+      required>
+      <option value="SAVINGS">Savings Account</option>
+      <option value="CHECKING">Current Account</option>
+      <option value="BUSINESS">Business Account</option>
+    </select>
+  </div>
+
+  <!-- IFSC Code -->
+  <div class="form-group">
+    <label for="ifscCode">IFSC Code *</label>
+    <div class="input-with-button">
+      <input
+        type="text"
+        id="ifscCode"
+        [(ngModel)]="newAccount.ifscCode"
+        placeholder="e.g., SBIN0001234"
+        name="ifscCode"
+        maxlength="11"
+        (ngModelChange)="newAccount.ifscCode = newAccount.ifscCode.toUpperCase(); onIFSCChange()"
+        [disabled]="ifscVerified"
+        required
+      />
+      <button
+        type="button"
+        class="btn-verify"
+        (click)="verifyIFSC()"
+        [disabled]="isVerifyingIFSC || ifscVerified || newAccount.ifscCode.length !== 11">
+        <span *ngIf="!isVerifyingIFSC && !ifscVerified">Verify</span>
+        <span *ngIf="isVerifyingIFSC">Verifying...</span>
+        <span *ngIf="ifscVerified">✓ Verified</span>
+      </button>
+    </div>
+    <small class="field-hint">IFSC code must match your selected bank</small>
+  </div>
+
+  <!-- Branch Details -->
+  <div *ngIf="bankDetails && ifscVerified" class="bank-details-card">
+    <div class="details-header">
+      <h4>Branch Verified</h4>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Branch:</span>
+      <span class="detail-value">{{ bankDetails.BRANCH }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Location:</span>
+      <span class="detail-value">{{ bankDetails.CITY }}, {{ bankDetails.STATE }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">IFSC:</span>
+      <span class="detail-value">{{ bankDetails.IFSC }}</span>
+    </div>
+  </div>
+
+  <!-- Account Holder Name -->
+  <div class="form-group">
+    <label for="accountHolderName">Account Holder Name *</label>
+    <input
+      type="text"
+      id="accountHolderName"
+      [(ngModel)]="newAccount.accountHolderName"
+      name="accountHolderName"
+      placeholder="As per bank records"
+      required
+    />
+    <small class="field-hint">Must match the name on your bank account</small>
+  </div>
+
+  <!-- Account Number -->
+  <div class="form-group">
+    <label for="existingAccountNumber">Account Number *</label>
+    <div class="input-with-button">
+      <input
+        type="text"
+        id="existingAccountNumber"
+        [(ngModel)]="newAccount.existingAccountNumber"
+        (ngModelChange)="onAccountNumberChange()"
+        name="existingAccountNumber"
+        placeholder="Enter 9-18 digit account number"
+        pattern="[0-9]{9,18}"
+        maxlength="18"
+        [disabled]="accountVerified"
+        required
+      />
+      <button
+        type="button"
+        class="btn-verify"
+        (click)="validateAccountNumber()"
+        [disabled]="isVerifyingAccount || accountVerified || newAccount.existingAccountNumber.length < 9">
+        <span *ngIf="!isVerifyingAccount && !accountVerified">Validate</span>
+        <span *ngIf="isVerifyingAccount">Validating...</span>
+        <span *ngIf="accountVerified">✓ Validated</span>
+      </button>
+    </div>
+    <small class="field-hint">
+      Demo: Any valid format will be accepted. Production would use Penny Drop verification.
+    </small>
+  </div>
+
+  <!-- ✅ DEMO VALIDATION INFO -->
+  <div class="validation-info" *ngIf="accountVerified">
+    <div class="info-icon">💡</div>
+    <div class="info-content">
+      <strong>Demo Validation Complete</strong>
+      <p>In production, this would trigger a Penny Drop (₹1.00) test transaction to verify account ownership. A random demo balance between ₹5,000 - ₹50,000 will be assigned to your account for testing.</p>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="form-actions">
+    <button type="button" class="btn btn-secondary" (click)="goBackToBankSelection()">
+      Back
+    </button>
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="isLoading || !ifscVerified || !accountVerified">
+      <span *ngIf="!isLoading">Link Account</span>
+      <span *ngIf="isLoading">
+        <span class="spinner-small"></span>
+        Linking...
+      </span>
+    </button>
+  </div>
+
+</form>
+
+<!-- Error/Success Messages -->
+<div *ngIf="successMessage && step !== 'success'" class="alert alert-success">
+  <span class="alert-icon">✓</span>
+  {{ successMessage }}
+</div>
+
+<div *ngIf="accountError" class="alert alert-error">
+  <span class="alert-icon">⚠</span>
+  {{ accountError }}
+</div>
+
+<!-- Step 3: Success -->
+<div *ngIf="step === 'success'" class="success-screen">
+  <div class="success-animation">
+    <div class="success-icon"></div>
+  </div>
+  <h2>Account Linked Successfully!</h2>
+  <p>Your demo bank account has been securely linked to your profile.</p>
+
+  <!-- ✅ DEMO BALANCE NOTICE -->
+  <div class="balance-notice">
+    <div class="balance-icon">💰</div>
+    <div class="balance-content">
+      <strong>Demo Balance Assigned</strong>
+      <p>A random balance between ₹5,000 and ₹50,000 has been credited to your account for testing purposes.</p>
+    </div>
+  </div>
+
+  <div class="success-details">
+    <div class="success-bank-card"
+         [style.background]="'linear-gradient(135deg, ' + (selectedBank?.color || '#667eea') + ' 0%, ' + (selectedBank?.color || '#764ba2') + 'dd 100%)'">
+      <div class="card-chip"></div>
+      <div class="card-info">
+        <div class="card-bank">{{ selectedBank?.name }}</div>
+        <div class="card-number">●●●● ●●●● ●●●● {{ newAccount.existingAccountNumber.slice(-4) }}</div>
+        <div class="card-holder">{{ newAccount.accountHolderName }}</div>
+        <div class="card-type-badge">{{ newAccount.accountType }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="success-actions">
+    <button class="btn btn-primary" routerLink="/dashboard">
+      View Dashboard
+    </button>
+    <button class="btn btn-secondary" (click)="resetForm(); step = 'bank-selection'">
+      Add Another Account
+    </button>
+  </div>
+
+  <p class="redirect-text">
+    <span class="redirect-spinner"></span>
+    Redirecting to dashboard in a moment...
+  </p>
+</div>

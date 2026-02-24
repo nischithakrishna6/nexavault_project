@@ -1,0 +1,140 @@
+<div class="auth-outer-container">
+
+
+    <!-- FULL WIDTH REGISTER CARD -->
+    <div class="auth-right full-width">
+      <div class="auth-card">
+
+        <!-- TOP CENTERED TITLE -->
+        <div class="auth-header center-header">
+          <h2 class="register-title">Register Your Nexavault Account</h2>
+          <p class="text-muted">Join our protected and seamless banking experience</p>
+        </div>
+
+        <!-- ERROR -->
+        <div *ngIf="errorMessage" class="alert alert-error">
+          {{ errorMessage }}
+        </div>
+
+        <!-- FORM -->
+        <form (ngSubmit)="onSubmit()" class="register-form">
+
+          <!-- TWO COLUMN LAYOUT -->
+          <div class="register-row">
+
+            <!-- LEFT COLUMN -->
+            <div class="register-left">
+
+              <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" name="firstName"
+                       [(ngModel)]="registerData.firstName" required />
+              </div>
+
+              <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" name="lastName"
+                       [(ngModel)]="registerData.lastName" required />
+              </div>
+
+              <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email"
+                       [(ngModel)]="registerData.email" required />
+              </div>
+
+              <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone"
+                       [(ngModel)]="registerData.phone" />
+              </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="register-right">
+
+              <div class="form-group">
+                <label for="password">Password</label>
+                <div class="password-input-wrapper">
+                  <input
+                    [type]="showPassword ? 'text' : 'password'"
+                    id="password"
+                    name="password"
+                    [(ngModel)]="registerData.password"
+                    (ngModelChange)="onPasswordChange()"
+                    required />
+                  <div class="eye-icon-wrapper">
+                    <button
+                      type="button"
+                      class="eye-icon-btn"
+                      (click)="togglePasswordVisibility()"
+                      tabindex="-1"
+                    >
+                      <span *ngIf="!showPassword"><img src="/hidden.png" alt="hidden"></span>
+                      <span *ngIf="showPassword"><img src="/views.png" alt="view"></span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Strength Bar -->
+                <div *ngIf="showPasswordRequirements && registerData.password.length > 0"
+                     class="password-strength"
+                     [class.weak]="getPasswordStrength() === 'weak'"
+                     [class.medium]="getPasswordStrength() === 'medium'"
+                     [class.strong]="getPasswordStrength() === 'strong'">
+                  <div class="strength-bar"></div>
+                  <span class="strength-text">
+                    {{ getPasswordStrength() | titlecase }} Password
+                  </span>
+                </div>
+
+                <!-- Requirements -->
+                <div *ngIf="showPasswordRequirements" class="password-requirements">
+                  <p class="requirements-title"> Security Requirements:</p>
+                  <ul class="requirements-list">
+                    <li [class.valid]="passwordValidation.minLength">At least 12 characters</li>
+                    <li [class.valid]="passwordValidation.complexityCount >= 3">
+                      Includes U/L/Num/Symbol ({{ passwordValidation.complexityCount }}/4)
+                    </li>
+                    <li [class.valid]="passwordValidation.noPersonalInfo">No personal info</li>
+                    <li [class.valid]="passwordValidation.noRepetition">No repeated characters</li>
+                    <li [class.valid]="passwordValidation.notCommon">Not a common password</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password"
+                       id="confirmPassword"
+                       name="confirmPassword"
+                       [(ngModel)]="confirmPassword"
+                       required />
+              </div>
+            </div>
+          </div>
+
+          <!-- CENTERED BUTTON + FOOTER -->
+          <div class="register-center">
+            <button type="submit"
+                    class="btn-primary"
+                    [disabled]="isLoading || !isPasswordValid()">
+              <span *ngIf="!isLoading">Create Account</span>
+              <span *ngIf="isLoading">Creating account...</span>
+            </button>
+            <p class="text-muted center-footer">
+              Already have an account?
+              <a routerLink="/login">Sign in</a>
+            </p>
+            <p *ngIf="!isPasswordValid() && showPasswordRequirements"
+               style="color: darkred;font-size: 1rem;margin-top: 0.5rem;">
+              Please meet all password requirements to continue
+            </p>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+

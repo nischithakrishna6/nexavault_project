@@ -1,0 +1,29 @@
+/* ------------------------------------
+   LAYOUT
+------------------------------------ */
+.layout {
+  min-height: 100vh;
+  display: flex;
+  background-size: 200% 200%;
+  padding: 2rem;
+  gap: 20px;
+}
+
+
+/* ------------------------------------
+   MAIN CONTENT GLASS CARD
+------------------------------------ */
+.main {
+  flex: 1;
+  padding: 2rem 3rem;
+  margin-left: 260px; /* full sidebar width */
+  border-radius: 20px;
+  background: rgb(255 255 255 / 60%);
+  backdrop-filter: blur(20px) saturate(180%);
+  transition: margin-left 0.3s ease;
+  min-height: 100vh;
+}
+
+.main.collapsed {
+  margin-left: 100px; /* collapsed sidebar width */
+}

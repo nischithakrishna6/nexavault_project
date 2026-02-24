@@ -1,0 +1,148 @@
+<!-- MAIN CONTENT AREA -->
+<div class="dashboard-container">
+
+  <!-- Left Section: Main Content -->
+  <div class="main-content">
+
+    <header class="top-header">
+      <div class="header-text">
+        <h1>Welcome, {{ currentUser?.firstName }}!</h1>
+        <p class="header-subtitle">Access & manage your account and transactions efficiently.</p>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- Notification -->
+      <div *ngIf="notification" class="alert alert-success mb-3">
+        {{ notification }}
+      </div>
+
+      <!-- Quick Actions -->
+      <h3 class="section-title">Quick Actions</h3>
+      <div class="action-buttons">
+        <button class="btn btn-primary" routerLink="/transfer">Transfer Money</button>
+        <button class="btn btn-primary" routerLink="/add-account">Add Account</button>
+        <button class="btn btn-primary" routerLink="/transactions">Transaction History</button>
+        <button class="btn btn-primary" routerLink="/expenses">Expenses Tracker</button>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-container">
+        <div class="spinner"></div>
+        <p>Loading your accounts...</p>
+      </div>
+
+      <!-- Accounts Section -->
+      <div *ngIf="!isLoading">
+
+        <!-- Header with Toggle Button -->
+        <div class="section-header">
+          <h3 class="section-title">My Banks</h3>
+          <div class="header-actions">
+            <button
+              class="btn-toggle-view"
+              (click)="toggleAccountsView()"
+              *ngIf="accounts.length > 0">
+              <span *ngIf="!showAllAccounts"> See All Accounts</span>
+              <span *ngIf="showAllAccounts"> Stack View</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="accounts.length === 0" class="empty-state">
+          <div class="empty-icon">🏦</div>
+          <h3>No bank accounts linked</h3>
+          <p>Add your first bank account to get started</p>
+        </div>
+
+        <!-- Cards Container -->
+        <div
+          *ngIf="accounts.length > 0"
+          class="accounts-container"
+          [class.stacked-view]="!showAllAccounts"
+          [class.grid-view]="showAllAccounts">
+
+          <div
+            *ngFor="let account of accounts; let i = index"
+            class="account-card"
+            [class.stacked]="!showAllAccounts"
+            [style.z-index]="!showAllAccounts ? (accounts.length - i) : 'auto'"
+            [style.transform]="!showAllAccounts ? 'translateY(' + (i * 15) + 'px) translateX(' + (i * 8) + 'px)' : 'none'">
+
+            <!-- Card Pattern -->
+            <div class="card-pattern"></div>
+
+            <!-- Card Content -->
+            <div class="card-content">
+
+              <!-- Top: Chip -->
+              <div class="card-top">
+                <div class="account-chip"></div>
+              </div>
+
+              <!-- Middle: Type + Balance -->
+              <div class="card-middle">
+                <div class="account-label">{{ account.accountType }}</div>
+                <div class="account-balance-large">{{ formatCurrency(account.balance) }}</div>
+              </div>
+
+              <!-- Bottom: Holder + Card Number -->
+              <div class="card-bottom">
+                <div class="card-holder">
+                  <div class="card-holder-name">{{ getAccountHolderName(account) }}</div>
+                </div>
+                <div class="card-number">●●●● ●●●● ●●●● {{ account.accountNumber?.slice(-4) || '0000' }}</div>
+              </div>
+
+              <!-- Bank Name Tag -->
+              <div class="bank-tag">
+                {{ account.bankName || 'Bank Account' }}
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ VERTICAL DIVIDER -->
+  <div class="vertical-divider"></div>
+
+  <!-- ✅ Right Sidebar: Profile & Stats -->
+  <div class="right-sidebar">
+
+    <!-- Profile Card -->
+    <div class="profile-card">
+      <div class="profile-avatar-large">
+        <span class="avatar-text">{{ currentUser?.firstName?.charAt(0) }}{{ currentUser?.lastName?.charAt(0) }}</span>
+      </div>
+      <h3 class="profile-name">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</h3>
+      <p class="profile-email">{{ currentUser?.email }}</p>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div>
+          <p class="label">Total Balance</p>
+          <h2>{{ formatCurrency(totalBalance) }}</h2>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">🏦</div>
+        <div>
+          <p class="label">Active Accounts</p>
+          <h2>{{ accounts.length }}</h2>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

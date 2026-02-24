@@ -1,0 +1,82 @@
+<div class="auth-page">
+  <div class="auth-outer-container">
+  <div class="auth-inner-container">
+    <!-- Left partition -->
+    <div class="auth-left">
+      <div class="welcome-text">
+        <div class="side-logo"><img src="/logo-bw.png" alt="logo">
+         </div>
+        <h1 class="welcome-heading">Digital Wallet for the Modern You</h1>
+        <p class="welcome-description"> Spend smarter, earn effortlessly, and track every financial move with ease.
+          Secure, seamless, and tailored for your digital lifestyle.
+          Manage your money anytime, anywhere, with confidence and clarity. </p>
+      </div>
+    </div>
+    <!-- Right partition (Glassmorphic login form) -->
+    <div class="auth-right">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h2>Sign In</h2> </div>
+        <div *ngIf="errorMessage"
+             class="alert alert-error">
+          {{ errorMessage }}
+        </div>
+        <form (ngSubmit)="onSubmit()"
+              class="auth-form">
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email"
+                   id="email"
+                   name="email"
+                   [(ngModel)]="loginData.email"
+                   placeholder="Enter your email" required
+                   [disabled]="isLoading" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="password-input-wrapper">
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                id="password"
+                name="password"
+                [(ngModel)]="loginData.password"
+                placeholder="Enter your password"
+                required
+                [disabled]="isLoading"
+              />
+              <div class="eye-icon-wrapper">
+                <button
+                  type="button"
+                  class="eye-icon-btn"
+                  (click)="togglePasswordVisibility()"
+                  tabindex="-1"
+                >
+                 <span *ngIf="!showPassword"><img src="/hidden.png" alt="hidden"></span>
+                  <span *ngIf="showPassword"><img src="/views.png" alt="view"></span>
+                </button>
+              </div>
+              <p class="text-muted">
+                <a routerLink="/forgot-password" class="forgot-password-link">Forgot Password?</a>
+              </p>
+
+            </div>
+          </div>
+
+          <button type="submit"
+                  class="btn btn-primary btn-block"
+                  [disabled]="isLoading" >
+            <span *ngIf="!isLoading">Sign In</span>
+            <span *ngIf="isLoading">Signing in...</span>
+          </button>
+        </form>
+        <div class="auth-footer">
+          <p class="text-muted">
+            Don't have an account?
+            <a routerLink="/register">Register here</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

@@ -1,0 +1,49 @@
+.about-container {
+  padding: 60px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.about-card {
+  max-width: 900px;
+  width: 100%;
+  padding: 40px;
+  border-radius: 20px;
+  background: rgb(255 255 255 / 12%);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgb(255 255 255 / 25%);
+  box-shadow: 0 8px 30px rgb(0 0 0 / 30%);
+  color: white;
+}
+
+.about-card h1,
+.about-card h2,
+.about-card h3 {
+  color: #fff;
+}
+
+.about-card p,
+.about-card li {
+  color: #e0e0e0;
+}
+
+.tech-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.tech-grid > div {
+  flex: 1 1 200px;
+}
+
+.about-card ul {
+  padding-left: 25px;
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+
+.about-card li {
+  margin-bottom: 8px;
+}

@@ -1,0 +1,40 @@
+<aside class="sidebar" [class.collapsed]="isCollapsed">
+
+  <!-- Logo -->
+  <div class="sidebar-logo" (click)="toggleSidebar()">
+    <img src="/logo-bw.png" alt="logo">
+    <span class="brand-text">NexaVault</span>
+  </div>
+
+  <!-- Nav Links -->
+  <nav class="sidebar-nav">
+    <a routerLink="/dashboard" routerLinkActive="active">
+      <img src="/dashboard.png"> <span>Overview</span>
+    </a>
+
+    <a routerLink="/add-account" routerLinkActive="active">
+      <img src="/accounts.png"> <span>Add Bank</span>
+    </a>
+
+    <a routerLink="/transfer" routerLinkActive="active">
+      <img src="/transfer.png"> <span>Transfer Fund</span>
+    </a>
+
+    <a routerLink="/transactions" routerLinkActive="active">
+      <img src="/transactions.png"> <span>History</span>
+    </a>
+
+    <a routerLink="/expenses" routerLinkActive="active">
+      <img src="/tracking.png"> <span>Track Expenses</span>
+    </a>
+
+  </nav>
+
+  <!-- Footer Logout -->
+  <div class="sidebar-footer">
+    <button class="logout-btn" (click)="logout()">
+      <img src="/log-out.png"><span>LogOut</span>
+    </button>
+  </div>
+
+</aside>

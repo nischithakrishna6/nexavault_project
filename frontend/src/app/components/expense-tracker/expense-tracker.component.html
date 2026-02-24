@@ -1,0 +1,212 @@
+<div class="expense-tracker-container">
+
+  <!-- Header -->
+  <header class="tracker-header">
+    <div class="header-content">
+      <h1>Expense Tracker</h1>
+      <p class="subtitle">Track and manage your expenses efficiently</p>
+    </div>
+    <button class="btn-add-expense" (click)="openAddExpenseModal()">
+      + Add Expense
+    </button>
+  </header>
+
+  <!-- Stats Cards -->
+  <div class="stats-section">
+    <div class="stat-card-large">
+      <div class="stat-icon-large">💰</div>
+      <div class="stat-content">
+        <span class="stat-label">Total Expenses</span>
+        <span class="stat-value">{{ formatCurrency(expenseStats?.totalExpenses || 0) }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card-large">
+      <div class="stat-icon-large">📊</div>
+      <div class="stat-content">
+        <span class="stat-label">Categories</span>
+        <span class="stat-value">{{ expenseStats?.categoryBreakdown?.length || 0 }}</span>
+
+
+      </div>
+    </div>
+
+    <div class="stat-card-large">
+      <div class="stat-icon-large">📝</div>
+      <div class="stat-content">
+        <span class="stat-label">Total Entries</span>
+        <span class="stat-value">{{ expenses.length }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="dashboard-main">
+  <div class="charts-container">
+  <div class="charts-section">
+
+    <!-- Period Selector -->
+    <div class="period-selector">
+      <button
+        class="period-btn"
+        [class.active]="selectedPeriod === 'daily'"
+        (click)="onPeriodChange('daily')">
+        Daily
+      </button>
+      <button
+        class="period-btn"
+        [class.active]="selectedPeriod === 'weekly'"
+        (click)="onPeriodChange('weekly')">
+        Weekly
+      </button>
+      <button
+        class="period-btn"
+        [class.active]="selectedPeriod === 'monthly'"
+        (click)="onPeriodChange('monthly')">
+        Monthly
+      </button>
+    </div>
+    </div>
+
+
+    <!-- Pie Chart -->
+    <div class="chart-card">
+      <h3>Category Breakdown</h3>
+      <div class="chart-wrapper">
+        <canvas
+          baseChart
+          [data]="pieChartData"
+          [options]="pieChartOptions"
+          [type]="pieChartType">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- Line Chart -->
+    <div class="chart-card">
+      <h3>Expense Trend</h3>
+      <div class="chart-wrapper">
+        <canvas
+          baseChart
+          [data]="lineChartData"
+          [options]="lineChartOptions"
+          [type]="lineChartType">
+        </canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Expenses -->
+  <div class="expenses-section">
+    <h2>Recent Expenses</h2>
+
+    <div *ngIf="isLoading" class="loading">
+      <div class="spinner"></div>
+    </div>
+
+    <div *ngIf="!isLoading && expenses.length === 0" class="empty-state">
+      <div class="empty-icon">📊</div>
+      <h3>No expenses yet</h3>
+      <p>Start tracking your expenses by adding your first entry</p>
+    </div>
+
+    <div *ngIf="!isLoading && expenses.length > 0" class="expenses-list">
+      <div *ngFor="let expense of expenses" class="expense-item">
+        <div class="expense-icon" [style.background]="getCategoryColor(expense.category)">
+          {{ getCategoryIcon(expense.category) }}
+        </div>
+        <div class="expense-details">
+          <span class="expense-category">{{ expense.category }}</span>
+          <span class="expense-description">{{ expense.description }}</span>
+          <span class="expense-date">{{ expense.date | date: 'MMM dd, yyyy' }}</span>
+        </div>
+        <div class="expense-actions">
+          <span class="expense-amount">{{ formatCurrency(expense.amount) }}</span>
+          <button class="btn-delete" (click)="deleteExpense(expense.id!)">
+            🗑️
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- Add Expense Modal -->
+  <div class="modal-overlay" *ngIf="showAddExpenseModal" (click)="closeAddExpenseModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Add New Expense</h2>
+        <button class="btn-close" (click)="closeAddExpenseModal()">✕</button>
+      </div>
+      <div class="modal-body">
+
+      <form class="expense-form" (ngSubmit)="addExpense()">
+
+        <div class="form-group">
+          <label>Category *</label>
+          <select [(ngModel)]="newExpense.category" name="category" required>
+            <option value="">Select category</option>
+            <option *ngFor="let cat of categories" [value]="cat.name">
+              {{ cat.icon }} {{ cat.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Amount (₹) *</label>
+          <input
+            type="number"
+            [(ngModel)]="newExpense.amount"
+            name="amount"
+            placeholder="0.00"
+            min="0"
+            step="0.01"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label>Date *</label>
+          <input
+            type="date"
+            [(ngModel)]="newExpense.date"
+            name="date"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea
+            [(ngModel)]="newExpense.description"
+            name="description"
+            placeholder="What did you spend on?"
+            rows="3">
+          </textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" (click)="closeAddExpenseModal()">
+            Cancel
+          </button>
+          <button type="submit" class="btn-submit">
+            Add Expense
+          </button>
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-overlay" *ngIf="showDeleteModal" (click)="closeDeleteModal()">
+    <div class="delete-modal" (click)="$event.stopPropagation()">
+      <h3>Delete Expense</h3>
+      <p>Are you sure you want to delete this expense?</p>
+
+      <div class="form-actions">
+        <button class="btn-cancel" (click)="closeDeleteModal()">Cancel</button>
+        <button class="btn-submit" (click)="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+
+</div>
