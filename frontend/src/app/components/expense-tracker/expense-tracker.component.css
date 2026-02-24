@@ -174,7 +174,8 @@ flex: 1; /* let them share available space equally */
   border: 1px solid rgb(255 255 255 / 50%);
   border-radius: 20px;
   padding: 1.5rem;
-  height: 1200px; /* or whatever fits your layout */
+  height: 825px;
+  width: 600px;
   overflow-y: auto; /* auto is usually better than scroll */
   margin-top: 80px;
 }
