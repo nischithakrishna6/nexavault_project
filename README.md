@@ -16,7 +16,6 @@
 - [About The Project](#about-the-project)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
-- [Screenshots](#screenshots)
 - [Getting Started](#getting-started)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -24,10 +23,6 @@
 - [Docker Deployment](#docker-deployment)
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
-- [Acknowledgments](#acknowledgments)
-
 ---
 
 ##  About The Project
@@ -128,7 +123,7 @@ NexaVault is a modern, full-stack fintech banking platform that provides users w
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
@@ -141,7 +136,7 @@ Ensure you have the following installed:
 - **Git**
 ```bash
 
-## 📦 Installation
+##  Installation
 
 ### 1️⃣ Clone the Repository
 ```bash
@@ -186,7 +181,7 @@ CREATE DATABASE fintechdb;
 
 ---
 
-## 🐳 Docker Deployment
+## Docker Deployment
 
 ### Quick Start with Docker Compose
 ```bash
@@ -211,15 +206,15 @@ docker-compose down
 
 ---
 
-## 💻 Usage
+##  Usage
 
-### 1️⃣ Register Account
+### 1️ Register Account
 
 1. Navigate to the registration page
 2. Fill in email, password, and personal details
 3. Submit to create account
 
-### 2️⃣ Link Bank Account
+### 2️ Link Bank Account
 
 1. Login with credentials
 2. Click "Add Account"
@@ -228,14 +223,14 @@ docker-compose down
 5. Enter account details
 6. Demo balance (₹5,000 - ₹50,000) will be assigned
 
-### 3️⃣ Transfer Funds
+### 3️ Transfer Funds
 
 1. Navigate to "Transfer Money"
 2. Select source and destination accounts
 3. Enter amount and description
 4. Confirm transfer
 
-### 4️⃣ Track Expenses
+### 4️ Track Expenses
 
 1. Go to "Track Expenses"
 2. Add expenses with category, amount, and date
@@ -244,7 +239,7 @@ docker-compose down
 
 ---
 
-## 📚 API Documentation
+##  API Documentation
 
 ### Base URL
 ```
@@ -252,115 +247,6 @@ Production: https://nexavault-backend.onrender.com/api
 Local: http://localhost:8081/api
 ```
 
-### Authentication Endpoints
-
-#### Register User
-```http
-POST /api/auth/register
-Content-Type: application/json
-
-{
-  "email": "user@example.com",
-  "password": "SecurePass123!",
-  "firstName": "John",
-  "lastName": "Doe",
-  "phone": "9876543210"
-}
-```
-
-#### Login
-```http
-POST /api/auth/login
-Content-Type: application/json
-
-{
-  "email": "user@example.com",
-  "password": "SecurePass123!"
-}
-
-Response:
-{
-  "success": true,
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "data": {
-    "userId": 1,
-    "email": "user@example.com",
-    "firstName": "John",
-    "lastName": "Doe"
-  }
-}
-```
-
-### Account Endpoints
-
-#### Get All Accounts
-```http
-GET /api/accounts
-Authorization: Bearer 
-```
-
-#### Link New Account
-```http
-POST /api/accounts/link
-Authorization: Bearer 
-Content-Type: application/json
-
-{
-  "accountType": "SAVINGS",
-  "bankName": "State Bank of India",
-  "bankCode": "SBIN",
-  "branchName": "Main Branch",
-  "ifscCode": "SBIN0001234",
-  "accountHolderName": "John Doe",
-  "existingAccountNumber": "12345678901234"
-}
-```
-
-### Transaction Endpoints
-
-#### Create Transfer
-```http
-POST /api/transactions/transfer
-Authorization: Bearer 
-Content-Type: application/json
-
-{
-  "fromAccountId": 1,
-  "toAccountId": 2,
-  "amount": 1000,
-  "description": "Payment for services"
-}
-```
-
-#### Get Transactions
-```http
-GET /api/transactions
-Authorization: Bearer 
-```
-
-### Expense Endpoints
-
-#### Add Expense
-```http
-POST /api/expenses
-Authorization: Bearer 
-Content-Type: application/json
-
-{
-  "category": "Food & Dining",
-  "amount": 500,
-  "description": "Lunch at restaurant",
-  "date": "2026-02-24"
-}
-```
-
-#### Get Expense Stats
-```http
-GET /api/expenses/stats?period=monthly
-Authorization: Bearer 
-```
-
----
 
 ## 📁 Project Structure
 ```
@@ -441,51 +327,6 @@ Generate Stats → Visualize Charts → Export Reports
 
 ---
 
-## 🚦 Environment Variables
-
-### Backend (.env or Render)
-```env
-SPRING_PROFILES_ACTIVE=prod
-SPRING_DATASOURCE_URL=jdbc:postgresql://host:5432/fintechdb
-SPRING_DATASOURCE_USERNAME=postgres
-SPRING_DATASOURCE_PASSWORD=your_password
-JWT_SECRET=your_jwt_secret_key_256_bits
-SPRING_MAIL_USERNAME=your-email@gmail.com
-SPRING_MAIL_PASSWORD=your_app_password
-```
-
-### Frontend (environment.prod.ts)
-```typescript
-export const environment = {
-  production: true,
-  apiUrl: 'https://nexavault-backend.onrender.com/api'
-};
-```
-
----
-
-## 🧪 Testing
-
-### Run Backend Tests
-```bash
-cd backend
-./mvnw test
-```
-
-### Run Frontend Tests
-```bash
-cd frontend
-npm run test
-```
-
-### Run E2E Tests
-```bash
-cd frontend
-npm run e2e
-```
-
----
-
 ## 🤝 Contributing
 
 Contributions make the open-source community amazing! Any contributions you make are **greatly appreciated**.
@@ -498,136 +339,3 @@ Contributions make the open-source community amazing! Any contributions you make
 
 ---
 
-## 📝 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
----
-
-## 📧 Contact
-
-**Nischitha Krishna**
-
-- LinkedIn: [Your LinkedIn](https://linkedin.com/in/your-profile)
-- Email: nischithakrishna6@gmail.com
-- GitHub: [@nischithakrishna6](https://github.com/nischithakrishna6)
-- Portfolio: [Your Portfolio](https://your-portfolio.com)
-
-**Project Link**: [https://github.com/nischithakrishna6/payment-platform](https://github.com/nischithakrishna6/payment-platform)
-
-**Live Demo**: [https://nexavault-frontend.onrender.com](https://nexavault-frontend.onrender.com)
-
----
-
-## 🙏 Acknowledgments
-
-* [Angular](https://angular.io/)
-* [Spring Boot](https://spring.io/projects/spring-boot)
-* [Chart.js](https://www.chartjs.org/)
-* [PostgreSQL](https://www.postgresql.org/)
-* [Docker](https://www.docker.com/)
-* [Render](https://render.com/)
-* [Font Awesome](https://fontawesome.com/)
-* [Google Fonts](https://fonts.google.com/)
-
----
-
-## 🎯 Roadmap
-
-- [x] User authentication & authorization
-- [x] Multi-account management
-- [x] Fund transfers
-- [x] Expense tracking
-- [x] Docker deployment
-- [ ] Mobile app (React Native)
-- [ ] Real-time notifications
-- [ ] Credit card management
-- [ ] Investment portfolio tracking
-- [ ] Bill payment integration
-- [ ] Multi-currency support
-- [ ] AI-powered expense insights
-
----
-
-## 📊 Project Stats
-
-![GitHub repo size](https://img.shields.io/github/repo-size/nischithakrishna6/payment-platform)
-![GitHub stars](https://img.shields.io/github/stars/nischithakrishna6/payment-platform?style=social)
-![GitHub forks](https://img.shields.io/github/forks/nischithakrishna6/payment-platform?style=social)
-![GitHub issues](https://img.shields.io/github/issues/nischithakrishna6/payment-platform)
-
----
-
-<div align="center">
-
-**⭐ Star this repo if you find it helpful!**
-
-Made with ❤️ by [Nischitha Krishna](https://github.com/nischithakrishna6)
-
-</div>
-
-Next Steps:
-1. Create the README
-bashcd C:\Projects\payment-platform
-notepad README.md
-# Paste the content above
-# Save and close
-2. Add Screenshots
-Take screenshots of your app and add them to the repo:
-bash# Create images folder
-mkdir images
-
-# Add your screenshots to this folder
-# Then update the README image links
-3. Create LICENSE File
-bashnotepad LICENSE
-```
-
-Paste MIT License:
-```
-MIT License
-
-Copyright (c) 2026 Nischitha Krishna
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-4. Push Everything
-bashgit add README.md LICENSE
-git commit -m "Add comprehensive README and LICENSE"
-git push origin main
-
-Take Screenshots
-Capture these views:
-
-Login page
-Dashboard with cards
-Account cards (stacked view)
-Transfer funds page
-Expense tracker with charts
-Transaction history
-
-Save them as:
-
-images/dashboard.png
-images/accounts.png
-images/expenses.png
-etc.
-
-Then update the README image links.
-
-Your GitHub repo will now look SUPER PROFESSIONAL! 🚀✨ Sonnet 4.5
