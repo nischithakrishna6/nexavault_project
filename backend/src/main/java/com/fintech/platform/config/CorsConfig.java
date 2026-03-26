@@ -1,4 +1,3 @@
-
 package com.fintech.platform.config;
 
 import org.springframework.context.annotation.Bean;
@@ -17,7 +16,13 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:4200"));
+
+        // Add both localhost (dev) and your production frontend
+        config.setAllowedOrigins(List.of(
+                "http://localhost:4200",
+                "https://nexavault-frontend.onrender.com"
+        ));
+
         config.setAllowedHeaders(Arrays.asList(
                 "Origin", "Content-Type", "Accept", "Authorization",
                 "Access-Control-Request-Method", "Access-Control-Request-Headers"
