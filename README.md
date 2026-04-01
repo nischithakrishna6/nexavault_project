@@ -46,7 +46,7 @@ LOGIN PAGE
 REGISTER PAGE
 <img width="1899" height="866" alt="Screenshot 2026-04-01 221336" src="https://github.com/user-attachments/assets/31fdb603-4510-4ef3-b005-2f4b70c8d90a" />
 FOOTER
-<img width="463" height="97" alt="Screenshot 2026-04-01 221404" src="https://github.com/user-attachments/assets/ea8e8acd-543d-429a-9ce7-ced391b76cbc" />
+<img width="1901" height="86" alt="Screenshot 2026-04-01 222257" src="https://github.com/user-attachments/assets/cf39891d-84b1-4b13-a8dc-6150a86a538e" />
 
 
 
