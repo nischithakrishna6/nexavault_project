@@ -46,7 +46,7 @@ LOGIN PAGE
 REGISTER PAGE
 <img width="1899" height="866" alt="Screenshot 2026-04-01 221336" src="https://github.com/user-attachments/assets/31fdb603-4510-4ef3-b005-2f4b70c8d90a" />
 FORGOT PASSWORD PAGE
-<img width="721" height="628" alt="Screenshot 2026-04-01 221349" src="https://github.com/user-attachments/assets/38004bb8-2d7f-4db8-bd78-b60b6fe38cb9" />
+<img width="1900" height="740" alt="Screenshot 2026-04-01 222615" src="https://github.com/user-attachments/assets/d29a9709-178d-4fc0-871f-2fee3dea87b9" />
 FOOTER
 <img width="1901" height="86" alt="Screenshot 2026-04-01 222257" src="https://github.com/user-attachments/assets/cf39891d-84b1-4b13-a8dc-6150a86a538e" />
 
