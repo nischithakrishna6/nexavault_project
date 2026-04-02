@@ -49,11 +49,12 @@ DASHBOARD
 <img width="1896" height="868" alt="Screenshot 2026-04-02 222612" src="https://github.com/user-attachments/assets/1c801bcc-03ef-44ff-a33b-bb849bf8801a" />
 ADD ACCOUNTS
 <img width="1896" height="867" alt="Screenshot 2026-04-02 222648" src="https://github.com/user-attachments/assets/e14de80e-b091-4a4d-8b9b-cfc6eb1dd99d" />
-
-<img width="1888" height="847" alt="Screenshot 2026-04-02 222948" src="https://github.com/user-attachments/assets/83bbcdef-ee49-406d-87d6-77b3a4ce9a02" />
-<img width="1892" height="861" alt="Screenshot 2026-04-02 222711" src="https://github.com/user-attachments/assets/653fed91-a991-4752-9d48-969536902f8d" />
+TRANSFER MONEY
 <img width="1891" height="873" alt="Screenshot 2026-04-02 222657" src="https://github.com/user-attachments/assets/cd14dbc2-f0a9-4243-91fb-4f5aa36c5e59" />
-
+TRANSACTION HISTORY
+<img width="1892" height="861" alt="Screenshot 2026-04-02 222711" src="https://github.com/user-attachments/assets/653fed91-a991-4752-9d48-969536902f8d" />
+EXPENSE TRACKER
+<img width="1888" height="847" alt="Screenshot 2026-04-02 222948" src="https://github.com/user-attachments/assets/83bbcdef-ee49-406d-87d6-77b3a4ce9a02" />
 FORGOT PASSWORD PAGE
 <img width="1900" height="740" alt="Screenshot 2026-04-01 222615" src="https://github.com/user-attachments/assets/d29a9709-178d-4fc0-871f-2fee3dea87b9" />
 FOOTER
